@@ -1,0 +1,246 @@
+{% if section.settings.procon_full_width %}</div>{% endif %}
+  <div class="protected-bg">
+    <div id="protected-content">
+      {% if request.design_mode %}
+        <div class="alert">
+          <a href="/account">Log in</a> with a member account in order<br>
+          to edit the members-only sections.<br>
+          <strong>This notice is only visible in the theme editor</strong>
+        </div>
+      {% endif %}
+      {% if section.settings.procon_title %}
+        <h1>{{ section.settings.procon_title }}</h1>
+      {% endif %}
+
+      {% if section.settings.procon_body %}  
+        {{ section.settings.procon_body }}
+      {% endif %}
+  
+      <div class="protected-content--actions">
+        {% unless customer %}
+        {% if section.settings.procon_show_login %}
+          {% assign redirect_url = canonical_url | remove: shop.url %}
+          <a href="/account/login?checkout_url={{ redirect_url }}" class="button button--primary">Login</a>
+        {% endif %}
+        {% endunless %}
+        {% if section.settings.procon_button_link %}
+          <a href="{{ section.settings.procon_button_link }}" class="button button--primary">{{ section.settings.procon_button_label }}</a>
+        {% endif %}
+      </div>
+
+      {% if section.settings.procon_show_custom_html %}
+      <div class="protected-content--custom-html">
+        {{ section.settings.procon_custom_html }}
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+{% if section.settings.procon_full_width %}<div>{% endif %}
+
+{% schema %}
+{
+  "name": "Members Only Gate",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Gate Settings"
+    },
+    {
+      "type": "text",
+      "id": "procon_title",
+      "label": {
+        "en": "Heading",
+        "de": "Seitenleisten-Überschrift",
+        "es": "Encabezado de la barra lateral",
+        "fr": "Titre de la barre latérale",
+        "pt-PT": "Título da barra lateral"
+      },
+      "default": {
+        "en": "Members Only"
+      }      
+    },
+    {
+      "type": "richtext",
+      "id": "procon_body",
+      "label": {
+        "en": "Text",
+        "de": "Text",
+        "es": "Texto",
+        "fr": "Texte",
+        "pt-PT": "Texto"
+      },
+      "default": {
+        "en": "<p>Thanks for checking out our website!<br>This section is exclusive to our members. You can login if you are a member, or signup to gain access.</p>"
+      }
+    },
+    {
+      "type": "url",
+      "id": "procon_button_link",
+      "label": {
+        "en": "Button link",
+        "de": "Buttonlink",
+        "es": "Enlace del botón",
+        "fr": "Lien du bouton",
+        "pt-PT": "Ligação do botão"
+      },
+      "info": {
+        "en": "Required to show the button",
+        "de": "Notwendig, den Button zu zeigen",
+        "es": "Es necesario mostrar el botón",
+        "fr": "Requis pour afficher le bouton",
+        "pt-PT": "Necessário para exibir o botão"
+      }
+    },
+    {
+      "type": "text",
+      "id": "procon_button_label",
+      "label": {
+        "en": "Button label",
+        "de": "Button-Bezeichnung",
+        "es": "Etiqueta del botón",
+        "fr": "Étiquette du bouton",
+        "pt-PT": "Etiqueta do botão"
+      },
+      "default": "Join Today"
+    },
+    {
+       "type": "checkbox",
+       "id": "procon_show_login",
+       "default": true,
+       "label": "Show login button"
+    },  
+    {
+       "type": "checkbox",
+       "id": "procon_full_width",
+       "default": true,
+       "label": "Full width image"
+    },
+    {
+      "type": "image_picker",
+      "id": "procon_mobile_bg",
+      "label": "Mobile Background"
+    },
+    {
+      "type": "image_picker",
+      "id": "procon_desktop_bg",
+      "label": "Desktop Background"
+    },
+    {
+      "type": "select",
+      "id": "procon_bg_position",
+      "options": [
+        { "value": "center", "label": "Center"},
+        { "value": "top", "label": "Top"},
+        { "value": "bottom", "label": "Bottom"}
+      ],
+      "label": "Background position",
+      "default": "center"
+    },
+    {
+      "type": "color",
+      "id": "procon_text_bg",
+      "label": "Content Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type":      "range",
+      "id":        "procon_text_bg_opacity",
+      "min":       0,
+      "max":        100,
+      "step":       5,
+      "unit":       "%",
+      "label":     "Content Background Opacity",
+      "default":   85
+    },
+    {
+       "type": "checkbox",
+       "id": "procon_show_custom_html",
+       "default": false,
+       "label": "Enable custom HTML"
+    },
+    {
+      "type": "textarea",
+      "id": "procon_custom_html",
+      "label": "Custom HTML",
+      "default": "<h1>put your custom html in here.</h1>"
+    }
+  ]
+}
+{% endschema %}
+
+
+<style>
+{% if section.settings.procon_desktop_bg %}
+  .protected-bg {
+    background-image: url('{{ section.settings.procon_desktop_bg | img_url: '600x' }}');
+  }  
+  @media (min-width: 601px) and (max-width: 1200px) {
+    .protected-bg {
+      background-image: url('{{ section.settings.procon_desktop_bg | img_url: '1200x' }}');
+    }
+  }
+  @media (min-width: 1201px) {
+    .protected-bg {
+      background-image: url('{{ section.settings.procon_desktop_bg | img_url: '2000x' }}');
+    }
+  }
+{% endif %}
+{% if section.settings.procon_mobile_bg %}
+  @media (max-width: 599px) {
+    .protected-bg {
+      background-image: url('{{ section.settings.procon_mobile_bg | img_url: '600x' }}');
+    }
+  }
+{% endif %}
+#protected-content h1 {
+  margin-top: 0;
+}
+#protected-content h3 {
+  margin: 0;
+}
+.protected-bg {
+  background-size: cover;
+  background-position: {{ section.settings.procon_bg_position }};
+  display: flex;
+  justify-content: center;
+}
+
+{% assign opacity = section.settings.procon_text_bg_opacity | times: 0.01 %}
+.protected-bg #protected-content {
+  border-radius: 3px;
+  background-color: {{ section.settings.procon_text_bg | color_modify: 'alpha', opacity }};
+  padding: 2em;
+  margin:10%;
+}
+#protected-content {
+  text-align: center;
+}
+.protected-content--actions {
+  display: flex;
+  justify-content: space-evenly;
+}
+@media screen and (max-width: 425px) {
+  .protected-content--actions {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+.protected-content--actions a {
+  min-width: 180px;
+}
+@media screen and (max-width: 425px) {
+  .protected-content--actions a:last-child {
+    margin-top:10px;
+  }
+}
+.alert {
+    padding: 20px;
+    background-color: #fff;
+    color: #6a4848;
+    margin-bottom: 15px;
+}
+
+</style>
