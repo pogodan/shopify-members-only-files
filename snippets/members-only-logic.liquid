@@ -1,0 +1,32 @@
+{% liquid
+  assign resource = template | split: "." | first
+  if [resource].metafields.custom.members_only.value == true
+    assign members_only = true
+    assign m_tags = [resource].metafields.custom.members_only_tags.value
+    if m_tags != blank
+      assign override_tags = true
+      for m_tag in m_tags
+        assign md_tag = m_tag | downcase
+        for c_tag in customer.tags
+          assign cd_tag = c_tag | downcase
+          echo "cd_tag"
+          echo cd_tag | json
+          echo "md_tag"
+          echo md_tag | json
+          
+          if cd_tag == md_tag
+            assign is_member = true
+            break 
+          endif
+        endfor
+        if is_member
+          break
+        endif
+      endfor
+    else
+      if customer.tags contains "member"
+        assign is_member = true
+      endif
+    endif
+  endif
+%}
